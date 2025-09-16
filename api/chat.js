@@ -25,14 +25,21 @@ export default async function handler(req, res) {
     });
 
     const data = await apiResponse.json();
-    console.log("OpenRouter AI Response:", data);
 
-    // Check the structure to avoid undefined
-    if (!data.choices || !data.choices[0] || !data.choices[0].message) {
-      return res.status(500).json({ response: "Error: Invalid API response" });
+    // --- THIS IS THE PART YOU PASTE ---
+    console.log("OpenRouter AI Response:", JSON.stringify(data, null, 2));
+
+    let answer = "Error: Could not parse AI response";
+
+    if (data.choices && data.choices[0]) {
+      if (data.choices[0].message && data.choices[0].message.content) {
+        answer = data.choices[0].message.content;
+      } else if (data.choices[0].content && data.choices[0].content[0] && data.choices[0].content[0].text) {
+        answer = data.choices[0].content[0].text;
+      }
     }
+    // ----------------------------------
 
-    const answer = data.choices[0].message.content;
     res.status(200).json({ response: answer });
 
   } catch (error) {
