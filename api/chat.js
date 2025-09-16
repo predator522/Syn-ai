@@ -26,8 +26,9 @@ export default async function handler(req, res) {
 
     const data = await apiResponse.json();
 
-    // --- THIS IS THE PART YOU PASTE ---
-    console.log("OpenRouter AI Response:", JSON.stringify(data, null, 2));
+    // --- LOG THE FULL RESPONSE INSIDE THE TRY BLOCK ---
+    console.log("Full OpenRouter AI Response:", JSON.stringify(data, null, 2));
+    // ----------------------------------------------------------------
 
     let answer = "Error: Could not parse AI response";
 
@@ -38,7 +39,6 @@ export default async function handler(req, res) {
         answer = data.choices[0].content[0].text;
       }
     }
-    // ----------------------------------
 
     res.status(200).json({ response: answer });
 
