@@ -14,7 +14,7 @@ async function sendMessage() {
       body: JSON.stringify({ prompt })
     });
     const data = await response.json();
-    chatBox.innerHTML += `<p><b>AI:</b> <img src="${data.image_url}" width="300"/></p>`;
+    chatBox.innerHTML += `<p><b>Syn AI:</b> <img src="${data.image_url}" width="300"/></p>`;
   } else {
     const response = await fetch("/api/chat", {
       method: "POST",
@@ -22,6 +22,6 @@ async function sendMessage() {
       body: JSON.stringify({ message })
     });
     const data = await response.json();
-    chatBox.innerHTML += `<p><b>AI:</b> ${data.response}</p>`;
+    chatBox.innerHTML += `<p><b>Syn AI:</b> ${data.response}</p>`;
   }
 }
