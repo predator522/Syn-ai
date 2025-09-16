@@ -1,0 +1,10 @@
+{
+  "name": "Syn-ai",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "vercel dev"
+  },
+  "dependencies": {
+    "openai": "^4.10.0"
+  }
+}
