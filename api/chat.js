@@ -13,11 +13,11 @@ export default async function handler(req, res) {
 
   try {
     const apiResponse = await fetch(
-      "https://api-inference.huggingface.co/models/mistralai/Mistral-7B-Instruct-v0.2",
+      "https://api-inference.huggingface.co/models/tiiuae/falcon-7b-instruct",
       {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${process.env.HF_API_KEY}`,
+          Authorization: `Bearer ${process.env.HF_API_KEY}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify({ inputs: message })
@@ -25,7 +25,7 @@ export default async function handler(req, res) {
     );
 
     const data = await apiResponse.json();
-    console.log("Hugging Face Response:", JSON.stringify(data, null, 2));
+    console.log("HF Response:", JSON.stringify(data, null, 2));
 
     let answer = "⚠️ Error: Could not parse AI response";
 
