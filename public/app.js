@@ -1,19 +1,31 @@
+const chatDiv = document.getElementById("chat");
+const input = document.getElementById("userInput");
+const apiSelector = document.getElementById("apiSelector");
+
+function appendMessage(sender, text) {
+  const msgDiv = document.createElement("div");
+  msgDiv.className = sender;
+  msgDiv.textContent = text;
+  chatDiv.appendChild(msgDiv);
+  chatDiv.scrollTop = chatDiv.scrollHeight;
+}
+
 async function handleSend() {
-  const input = document.getElementById("userInput");
-  const chat = document.getElementById("chat");
   const message = input.value.trim();
   if (!message) return;
 
-  // Show user message
-  chat.innerHTML += `<div class="user">You: ${message}</div>`;
+  appendMessage("user", `You: ${message}`);
   input.value = "";
 
-  const apiChoice = document.getElementById("apiSelector").value;
+  const selectedAI = apiSelector.value;
 
-  if (apiChoice === "offline") {
-    chat.innerHTML += `<div class="bot">Syn AI: ⚡ Offline AI not implemented yet.</div>`;
+  if (selectedAI === "offline") {
+    appendMessage("bot", "⚡ Offline AI not implemented yet.");
     return;
   }
+
+  // Syn AI / Hugging Face
+  appendMessage("bot", "💬 Syn AI is typing...");
 
   try {
     const res = await fetch("/api/chat", {
@@ -23,17 +35,21 @@ async function handleSend() {
     });
 
     const data = await res.json();
+    // Remove "typing..." message
+    chatDiv.lastChild.remove();
 
-    if (data.reply) {
-      chat.innerHTML += `<div class="bot">Syn AI: ${data.reply}</div>`;
-    } else if (data.error) {
-      chat.innerHTML += `<div class="bot">Syn AI Error: ${data.error}</div>`;
+    if (!res.ok) {
+      appendMessage("bot", `⚠️ Syn AI Error: ${data.error}`);
     } else {
-      chat.innerHTML += `<div class="bot">Syn AI: ⚠️ Unexpected response format.</div>`;
+      appendMessage("bot", `Syn AI: ${data.reply}`);
     }
   } catch (err) {
-    chat.innerHTML += `<div class="bot">Syn AI: ❌ Request failed (${err.message})</div>`;
+    chatDiv.lastChild.remove();
+    appendMessage("bot", `⚠️ Syn AI Error: ${err.message}`);
   }
-
-  chat.scrollTop = chat.scrollHeight; // auto-scroll
 }
+
+// Optional: Send on Enter key
+input.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") handleSend();
+});
