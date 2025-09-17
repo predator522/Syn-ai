@@ -1,15 +1,35 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Syn AI</title>
-  <link rel="stylesheet" href="style.css">
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    #chat { border: 1px solid #ccc; padding: 10px; height: 300px; overflow-y: auto; }
+    #inputArea { margin-top: 10px; }
+    .user { color: blue; margin: 5px 0; }
+    .bot { color: green; margin: 5px 0; }
+  </style>
 </head>
 <body>
   <h1>Syn AI</h1>
-  <div id="chat-box"></div>
-  <input type="text" id="user-input" placeholder="Type a message..." />
-  <button onclick="sendMessage()">Send</button>
 
-  <script src="script.js"></script>
+  <div>
+    <label for="apiSelector">Choose AI:</label>
+    <select id="apiSelector">
+      <option value="offline">Offline AI</option>
+      <option value="synai">Syn AI</option>
+    </select>
+  </div>
+
+  <div id="chat"></div>
+
+  <div id="inputArea">
+    <input type="text" id="userInput" placeholder="Type your message..." />
+    <button onclick="handleSend()">Send</button>
+  </div>
+
+  <script src="/app.js"></script>
 </body>
 </html>
