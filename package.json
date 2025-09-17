@@ -2,7 +2,7 @@
   "name": "syn-ai",
   "version": "1.0.0",
   "description": "Syn AI - AI chatbot hosted on Vercel",
-  "main": "index.js",
+  "type": "module",
   "scripts": {
     "start": "vercel dev"
   },
