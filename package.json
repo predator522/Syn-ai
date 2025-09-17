@@ -1,10 +1,12 @@
 {
-  "name": "Syn-ai",
+  "name": "syn-ai",
   "version": "1.0.0",
+  "description": "Syn AI - AI chatbot hosted on Vercel",
+  "main": "index.js",
   "scripts": {
     "start": "vercel dev"
   },
   "dependencies": {
-    "openai": "^4.10.0"
+    "node-fetch": "^3.3.2"
   }
 }
