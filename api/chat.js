@@ -1,43 +1,29 @@
 import fetch from "node-fetch";
 
 export default async function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).send("Method Not Allowed");
-  }
+  if (req.method !== "POST") return res.status(405).send("Method Not Allowed");
 
   const { message } = req.body;
-
-  if (!message) {
-    return res.status(400).json({ response: "No message provided" });
-  }
+  if (!message) return res.status(400).json({ response: "No message provided" });
 
   try {
-    const apiResponse = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const response = await fetch("https://api-inference.huggingface.co/models/gpt2", {
       method: "POST",
       headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.GREATAI_API_KEY}`
+        "Authorization": `Bearer ${process.env.HF_API_KEY}`,
+        "Content-Type": "application/json"
       },
-      body: JSON.stringify({
-        model: "openai/gpt-3.5-turbo",
-        messages: [{ role: "user", content: message }]
-      })
+      body: JSON.stringify({ inputs: message })
     });
 
-    const data = await apiResponse.json();
+    const data = await response.json();
+    console.log("Hugging Face Response:", data);
 
-    // --- LOG THE FULL RESPONSE INSIDE THE TRY BLOCK ---
-    console.log("Full OpenRouter AI Response:", JSON.stringify(data, null, 2));
-    // ----------------------------------------------------------------
-
-    let answer = "Error: Could not parse AI response";
-
-    if (data.choices && data.choices[0]) {
-      if (data.choices[0].message && data.choices[0].message.content) {
-        answer = data.choices[0].message.content;
-      } else if (data.choices[0].content && data.choices[0].content[0] && data.choices[0].content[0].text) {
-        answer = data.choices[0].content[0].text;
-      }
+    let answer = "Sorry, I couldn't get a response.";
+    if (Array.isArray(data) && data[0].generated_text) {
+      answer = data[0].generated_text;
+    } else if (data.generated_text) {
+      answer = data.generated_text;
     }
 
     res.status(200).json({ response: answer });
