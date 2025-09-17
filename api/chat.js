@@ -17,13 +17,17 @@ export default async function handler(req, res) {
     });
 
     const data = await response.json();
-    console.log("Hugging Face Response:", data);
+
+    // 🔎 Log the full HF response so we can debug
+    console.log("Hugging Face Response:", JSON.stringify(data, null, 2));
 
     let answer = "Sorry, I couldn't get a response.";
     if (Array.isArray(data) && data[0].generated_text) {
       answer = data[0].generated_text;
     } else if (data.generated_text) {
       answer = data.generated_text;
+    } else if (data.error) {
+      answer = `HF API Error: ${data.error}`;
     }
 
     res.status(200).json({ response: answer });
