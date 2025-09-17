@@ -1,50 +1,39 @@
-const API_OPTIONS = {
-  offline: {
-    endpoint: "",
-    key: "",
-    model: "offline"
-  },
-  synai: {
-    endpoint: "/api/chat", // talks to backend
-    key: "",
-    model: "synai/chat-model"
-  }
-};
-
-async function sendMessage(message) {
-  const apiChoice = document.getElementById("apiSelector").value;
-  const apiConfig = API_OPTIONS[apiChoice];
-
-  if (apiChoice === "offline") {
-    return "⚡ Offline AI not implemented yet.";
-  }
-
-  try {
-    const response = await fetch(apiConfig.endpoint, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message })
-    });
-
-    const data = await response.json();
-    return data.response || "⚠️ No response from Syn AI";
-  } catch (err) {
-    console.error(err);
-    return "❌ Error contacting Syn AI backend.";
-  }
-}
-
 async function handleSend() {
   const input = document.getElementById("userInput");
   const chat = document.getElementById("chat");
+  const message = input.value.trim();
+  if (!message) return;
 
-  const userMessage = input.value.trim();
-  if (!userMessage) return;
-
-  chat.innerHTML += `<div class="user">You: ${userMessage}</div>`;
+  // Show user message
+  chat.innerHTML += `<div class="user">You: ${message}</div>`;
   input.value = "";
 
-  const botReply = await sendMessage(userMessage);
-  chat.innerHTML += `<div class="bot">Syn AI: ${botReply}</div>`;
-  chat.scrollTop = chat.scrollHeight;
+  const apiChoice = document.getElementById("apiSelector").value;
+
+  if (apiChoice === "offline") {
+    chat.innerHTML += `<div class="bot">Syn AI: ⚡ Offline AI not implemented yet.</div>`;
+    return;
+  }
+
+  try {
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
+
+    const data = await res.json();
+
+    if (data.reply) {
+      chat.innerHTML += `<div class="bot">Syn AI: ${data.reply}</div>`;
+    } else if (data.error) {
+      chat.innerHTML += `<div class="bot">Syn AI Error: ${data.error}</div>`;
+    } else {
+      chat.innerHTML += `<div class="bot">Syn AI: ⚠️ Unexpected response format.</div>`;
+    }
+  } catch (err) {
+    chat.innerHTML += `<div class="bot">Syn AI: ❌ Request failed (${err.message})</div>`;
+  }
+
+  chat.scrollTop = chat.scrollHeight; // auto-scroll
 }
